@@ -200,6 +200,7 @@ const promptSources = {
 
 const generatedPromptCount = 10;
 const STORAGE_KEY = "sketchCustomPrompts";
+const LOCAL_BACKUP_KEY = "sketchLocalPromptBackup";
 const BACKUP_CODE = "sketch4life";
 
 const ROUND_SECONDS = 120;
@@ -772,28 +773,13 @@ function getBackupSnapshot() {
   };
 }
 
-function downloadTextFile(filename, content, type = "application/json") {
-  const blob = new Blob([content], { type: `${type};charset=utf-8` });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.style.display = "none";
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
-}
-
 function setBackupStatus(message) {
   backupStatus.textContent = message;
 }
 
 function saveLocalBackup() {
   saveCustomPrompts();
-  const payload = JSON.stringify(getBackupSnapshot(), null, 2);
-  const date = new Date().toISOString().slice(0, 10);
-  downloadTextFile(`sketchgame-backup-${date}.json`, payload);
+  localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(getBackupSnapshot()));
   backupPayloadInput.value = "";
   setBackupStatus(i18n[currentLanguage].backupStatusLocal);
 }
