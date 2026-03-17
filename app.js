@@ -226,6 +226,12 @@ const promptEls = [
   document.getElementById("prompt3")
 ];
 
+const playCategoryMap = [
+  { key: "category1", label: "category1" },
+  { key: "category2", label: "category2" },
+  { key: "category3", label: "category3" }
+];
+
 const settingsCategorySelect = document.getElementById("settingsCategorySelect");
 const manualPromptInput = document.getElementById("manualPromptInput");
 const manualAddBtn = document.getElementById("manualAddBtn");
@@ -430,6 +436,9 @@ let generatedPromptsByCategory = {
 };
 
 function randomFrom(list) {
+  if (!Array.isArray(list) || list.length === 0) {
+    return "";
+  }
   return list[Math.floor(Math.random() * list.length)];
 }
 
@@ -449,11 +458,23 @@ function getCurrentPromptPool(language) {
   };
 }
 
+function getPromptPoolForCategory(language, category) {
+  if (!category) return [];
+  if (!basePrompts[language] || !basePrompts[language][category]) return [];
+
+  const basePool = basePrompts[language][category] || [];
+  const customPool = (customPrompts[language] && customPrompts[language][category]) ? customPrompts[language][category] : [];
+  return [...basePool, ...customPool];
+}
+
 function pickPrompts() {
   const selected = getCurrentPromptPool(currentLanguage);
-  promptEls[0].textContent = randomFrom(selected.category1);
-  promptEls[1].textContent = randomFrom(selected.category2);
-  promptEls[2].textContent = randomFrom(selected.category3);
+
+  promptEls.forEach((el, index) => {
+    const category = playCategoryMap[index]?.key;
+    const pool = getPromptPoolForCategory(currentLanguage, category) || selected[category] || [];
+    el.textContent = randomFrom(pool);
+  });
 }
 
 function showScreen(screen) {
