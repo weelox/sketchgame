@@ -361,6 +361,10 @@ function clone(obj) {
 
 let customPrompts = loadCustomPrompts();
 
+function reloadCustomPrompts() {
+  customPrompts = loadCustomPrompts();
+}
+
 function loadCustomPrompts() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -487,6 +491,7 @@ function showScreen(screen) {
     screenFinished.classList.add("active");
   } else if (screen === "settings") {
     screenSettings.classList.add("active");
+    reloadCustomPrompts();
     activeSettingsCategory = settingsCategorySelect.value;
     generatedPromptsByCategory[activeSettingsCategory] = [];
     renderSettings();
@@ -520,6 +525,7 @@ function startTimer() {
 }
 
 function startRound() {
+  reloadCustomPrompts();
   pickPrompts();
   showScreen("play");
   startTimer();
