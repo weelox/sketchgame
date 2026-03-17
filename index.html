@@ -85,17 +85,13 @@
         </div>
 
         <div class="settings-block">
-          <p id="settings-backup-title" class="settings-subtitle">Säkerhetskod</p>
-          <label id="settings-backup-label" for="backupCodeInput">Lås med kod för att spara/ladda in</label>
+          <p id="settings-backup-title" class="settings-subtitle">Säkerhetskopiering</p>
           <div class="prompt-add-row">
-            <input id="backupCodeInput" type="password" maxlength="16" value="sketch4life" />
+            <button id="saveLocalBtn" class="btn btn-secondary" type="button">Spara på din enhet</button>
+            <button id="saveAllBtn" class="btn btn-secondary" type="button">Spara för alla</button>
           </div>
-          <div class="prompt-add-row">
-            <input id="backupPayloadInput" type="text" maxlength="12000" placeholder="Klistra in backup-kod här" />
-            <button id="restoreBackupBtn" class="btn btn-secondary" type="button">Ladda</button>
-          </div>
-          <button id="saveBackupBtn" class="btn btn-primary" type="button">Spara mina prompts</button>
-          <p id="backupMessage" class="settings-message" aria-live="polite"></p>
+          <textarea id="backupPayloadInput" class="backup-textarea" rows="4" placeholder="Din delningskod visas här" aria-label="Dela-kod"></textarea>
+          <p id="backupStatus" class="backup-status"></p>
         </div>
 
         <button id="closeSettingsBtn" class="btn btn-primary" type="button">Tillbaka</button>

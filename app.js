@@ -234,19 +234,16 @@ const applyGeneratedBtn = document.getElementById("applyGeneratedBtn");
 const customList = document.getElementById("customList");
 const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
 const closeSettingsBtn = document.getElementById("closeSettingsBtn");
-const backupCodeInput = document.getElementById("backupCodeInput");
+const saveLocalBtn = document.getElementById("saveLocalBtn");
+const saveAllBtn = document.getElementById("saveAllBtn");
 const backupPayloadInput = document.getElementById("backupPayloadInput");
-const saveBackupBtn = document.getElementById("saveBackupBtn");
-const restoreBackupBtn = document.getElementById("restoreBackupBtn");
-const backupMessageEl = document.getElementById("backupMessage");
+const backupStatus = document.getElementById("backupStatus");
 
 const settingsTitle = document.getElementById("settings-title");
 const settingsCategoryLabel = document.getElementById("settings-category-label");
 const manualLabel = document.getElementById("manual-label");
 const settingsGenerateTitle = document.getElementById("settings-generate-title");
 const settingsCustomTitle = document.getElementById("settings-custom-title");
-const settingsBackupTitle = document.getElementById("settings-backup-title");
-const settingsBackupLabel = document.getElementById("settings-backup-label");
 
 const i18n = {
   sv: {
@@ -271,6 +268,15 @@ const i18n = {
     manualLabel: "Lägg till prompt",
     manualAddButton: "Lägg till",
     manualPlaceholder: "Skriv in en egen prompt och tryck lägg till",
+    backupTitle: "Säkerhetskopiering",
+    saveLocalButton: "Spara på din enhet",
+    saveAllButton: "Spara för alla",
+    backupPlaceholder: "Din delningskod visas här",
+    backupStatusLocal: "Backup sparad på din enhet",
+    backupStatusUnlocked: "Kod godkänd",
+    backupStatusDenied: "Fel kod",
+    backupStatusCopied: "Delningskod kopierad till urklipp",
+    backupDialogLabel: "Ange kod för att spara för alla",
     generateTitle: "Generera nya förslag",
     generateButton: "Generera 10 nya prompts",
     applyGenerated: "Lägg till valda",
@@ -278,18 +284,7 @@ const i18n = {
     deleteSelected: "Ta bort valda",
     openSettings: "Inställningar",
     closeSettings: "Tillbaka",
-    noItems: "Inga förslag ännu",
-    backupTitle: "Säkerhetskod",
-    backupLabel: "Kod för att spara/ladda",
-    backupCodeLabel: "Ange kod (sketch4life)",
-    saveBackupButton: "Spara mina prompts som kod",
-    restoreBackupButton: "Ladda prompts från kod",
-    backupPlaceholder: "Klistra in kod här",
-    backupNoPayload: "Klistra in kod att ladda",
-    backupWrongCode: "Fel kod. Ange sketch4life.",
-    backupInvalid: "Koden går inte att läsa. Kontrollera att den är hel.",
-    backupSaved: "Sparat. Koden är kopierad om det går.",
-    backupLoaded: "Prompts laddade från kod."
+    noItems: "Inga förslag ännu"
   },
   en: {
     lang: "en",
@@ -313,6 +308,15 @@ const i18n = {
     manualLabel: "Add prompt",
     manualAddButton: "Add",
     manualPlaceholder: "Type your own prompt and press add",
+    backupTitle: "Backup",
+    saveLocalButton: "Save on your device",
+    saveAllButton: "Save for everyone",
+    backupPlaceholder: "Your share code will appear here",
+    backupStatusLocal: "Backup saved on your device",
+    backupStatusUnlocked: "Code accepted",
+    backupStatusDenied: "Wrong code",
+    backupStatusCopied: "Share code copied to clipboard",
+    backupDialogLabel: "Enter code to save for everyone",
     generateTitle: "Generate new suggestions",
     generateButton: "Generate 10 prompts",
     applyGenerated: "Add selected",
@@ -320,18 +324,7 @@ const i18n = {
     deleteSelected: "Delete selected",
     openSettings: "Settings",
     closeSettings: "Back",
-    noItems: "No items yet",
-    backupTitle: "Backup",
-    backupLabel: "Code to save/load",
-    backupCodeLabel: "Enter code (sketch4life)",
-    saveBackupButton: "Save my prompts as code",
-    restoreBackupButton: "Load prompts from code",
-    backupPlaceholder: "Paste code here",
-    backupNoPayload: "Paste a code first",
-    backupWrongCode: "Wrong code. Use sketch4life.",
-    backupInvalid: "Code is invalid. Check it is complete.",
-    backupSaved: "Saved. Code copied if supported.",
-    backupLoaded: "Prompts loaded from code."
+    noItems: "No items yet"
   }
 };
 
@@ -344,50 +337,31 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-function normalizePromptStore(value) {
-  return {
-    sv: {
-      category1: ensureArray(value?.sv?.category1),
-      category2: ensureArray(value?.sv?.category2),
-      category3: ensureArray(value?.sv?.category3)
-    },
-    en: {
-      category1: ensureArray(value?.en?.category1),
-      category2: ensureArray(value?.en?.category2),
-      category3: ensureArray(value?.en?.category3)
-    }
-  };
-}
-
-let customPrompts = loadCustomPrompts();
+const customPrompts = loadCustomPrompts();
 
 function loadCustomPrompts() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return clone(startDefaults);
     const parsed = JSON.parse(raw);
-    return normalizePromptStore(parsed);
+
+    const sanitized = {
+      sv: {
+        category1: ensureArray(parsed?.sv?.category1),
+        category2: ensureArray(parsed?.sv?.category2),
+        category3: ensureArray(parsed?.sv?.category3)
+      },
+      en: {
+        category1: ensureArray(parsed?.en?.category1),
+        category2: ensureArray(parsed?.en?.category2),
+        category3: ensureArray(parsed?.en?.category3)
+      }
+    };
+
+    return sanitized;
   } catch {
     return clone(startDefaults);
   }
-}
-
-function encodePayload(data) {
-  const raw = new TextEncoder().encode(JSON.stringify(data));
-  let binary = "";
-  for (let i = 0; i < raw.length; i += 1) {
-    binary += String.fromCharCode(raw[i]);
-  }
-  return btoa(binary);
-}
-
-function decodePayload(payload) {
-  const binary = atob(payload);
-  const raw = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) {
-    raw[i] = binary.charCodeAt(i);
-  }
-  return JSON.parse(new TextDecoder().decode(raw));
 }
 
 function saveCustomPrompts() {
@@ -420,7 +394,12 @@ let currentTheme = initTheme();
 let currentLanguage = initLanguage();
 
 const categories = ["category1", "category2", "category3"];
-let generatedPrompts = [];
+let activeSettingsCategory = "category1";
+let generatedPromptsByCategory = {
+  category1: [],
+  category2: [],
+  category3: []
+};
 
 function randomFrom(list) {
   return list[Math.floor(Math.random() * list.length)];
@@ -459,6 +438,8 @@ function showScreen(screen) {
     screenFinished.classList.add("active");
   } else if (screen === "settings") {
     screenSettings.classList.add("active");
+    activeSettingsCategory = settingsCategorySelect.value;
+    generatedPromptsByCategory[activeSettingsCategory] = [];
     renderSettings();
   }
 }
@@ -542,15 +523,12 @@ function updateLanguageText(language) {
   generatePromptsBtn.textContent = strings.generateButton;
   applyGeneratedBtn.textContent = strings.applyGenerated;
   manualAddBtn.textContent = strings.manualAddButton;
+  saveLocalBtn.textContent = strings.saveLocalButton;
+  saveAllBtn.textContent = strings.saveAllButton;
+  document.getElementById("settings-backup-title").textContent = strings.backupTitle;
   deleteSelectedBtn.textContent = strings.deleteSelected;
   closeSettingsBtn.textContent = strings.closeSettings;
-  settingsBackupTitle.textContent = strings.backupTitle;
-  settingsBackupLabel.textContent = strings.backupLabel;
-  backupCodeInput.placeholder = strings.backupCodeLabel;
   backupPayloadInput.placeholder = strings.backupPlaceholder;
-  saveBackupBtn.textContent = strings.saveBackupButton;
-  restoreBackupBtn.textContent = strings.restoreBackupButton;
-  setBackupMessage("");
 
   const categoryNames = strings.settingsCategoryNames;
   categories.forEach((category, index) => {
@@ -565,11 +543,7 @@ function updateLanguageText(language) {
     renderSettings();
   }
 
-  if (screenSettings.classList.contains("active")) {
-    backupCodeInput.value = "";
-    backupPayloadInput.value = "";
-    setBackupMessage("");
-  }
+  screenStart.querySelector(".play-actions")?.querySelector("button")?.setAttribute("title", strings.resetButton);
 }
 
 function addCustomPrompt(category, value) {
@@ -647,13 +621,21 @@ function renderCustomList(category) {
 }
 
 function renderSettings() {
-  const category = settingsCategorySelect.value;
+  const category = getCurrentCategoryLabel();
   renderCustomList(category);
-  renderGeneratedList(generatedPrompts);
+  renderGeneratedList(generatedPromptsByCategory[category]);
 }
 
 function getCurrentCategoryLabel() {
-  return settingsCategorySelect.value;
+  return activeSettingsCategory;
+}
+
+function getActiveGeneratedPrompts() {
+  return generatedPromptsByCategory[getCurrentCategoryLabel()] || [];
+}
+
+function setActiveGeneratedPrompts(value) {
+  generatedPromptsByCategory[getCurrentCategoryLabel()] = value;
 }
 
 function randomGeneratedPrompt(language) {
@@ -675,6 +657,15 @@ function randomGeneratedPrompt(language) {
   return randomFrom(seed.do);
 }
 
+function getGeneratedPool(language) {
+  const seed = promptSources[language];
+  return [
+    ...seed.has.map((item) => language === "sv" ? `Har ${item}` : `Has ${item}`),
+    ...seed.state.map((item) => language === "sv" ? `Är ${item}` : `Is ${item}`),
+    ...seed.do
+  ];
+}
+
 function generatePrompts() {
   const language = currentLanguage;
   const maxAttempts = 5000;
@@ -688,39 +679,56 @@ function generatePrompts() {
     ...customPrompts[language].category3
   ]);
 
-  const generated = new Set();
-  while (generated.size < generatedPromptCount) {
-    attempts += 1;
-    if (attempts > maxAttempts) {
-      break;
-    }
+  const generatedPool = getGeneratedPool(language);
+  const candidates = generatedPool.filter((prompt) => !existing.has(prompt));
+  const fallbackPool = candidates.length > 0 ? candidates : generatedPool;
 
-    const maybePrompt = randomGeneratedPrompt(language);
-    if (existing.has(maybePrompt) || generated.has(maybePrompt)) {
-      continue;
+  const generated = new Set();
+  while (generated.size < generatedPromptCount && attempts < maxAttempts) {
+    attempts += 1;
+    const maybePrompt = randomFrom(fallbackPool);
+    if (!generated.has(maybePrompt)) {
+      generated.add(maybePrompt);
     }
-    generated.add(maybePrompt);
   }
 
-  generatedPrompts = Array.from(generated);
-  renderGeneratedList(generatedPrompts);
+  if (generated.size < generatedPromptCount && fallbackPool.length > 0) {
+    let loopGuard = 0;
+    while (generated.size < generatedPromptCount && loopGuard < fallbackPool.length * 3) {
+      const candidate = fallbackPool[loopGuard % fallbackPool.length];
+      generated.add(candidate);
+      loopGuard += 1;
+    }
+  }
+
+  const finalPrompts = Array.from(generated).slice(0, generatedPromptCount);
+  setActiveGeneratedPrompts(finalPrompts);
+  renderGeneratedList(finalPrompts);
 }
 
 function applyGeneratedSelection() {
   const boxes = generatedList.querySelectorAll("input:checked");
   const category = getCurrentCategoryLabel();
+  const selected = new Set();
   let added = false;
 
   boxes.forEach((box) => {
-    if (addCustomPrompt(category, box.value)) {
+    const value = box.value;
+    selected.add(value);
+    if (addCustomPrompt(category, value)) {
       added = true;
     }
   });
 
+  setActiveGeneratedPrompts(getActiveGeneratedPrompts().filter((prompt) => !selected.has(prompt)));
+
   if (added) {
     renderCustomList(category);
-    renderGeneratedList(generatedPrompts);
+    renderGeneratedList(getActiveGeneratedPrompts());
+    return;
   }
+
+  renderGeneratedList(getActiveGeneratedPrompts());
 }
 
 function applyDeleteSelected() {
@@ -747,48 +755,70 @@ function applyManualAdd() {
   }
 }
 
-function isBackupCodeValid() {
-  return backupCodeInput.value.trim().toLowerCase() === BACKUP_CODE;
-}
-
-function setBackupMessage(message) {
-  backupMessageEl.textContent = message || "";
-}
-
-function saveBackup() {
-  if (!isBackupCodeValid()) {
-    setBackupMessage(i18n[currentLanguage].backupWrongCode);
-    return;
-  }
-
-  const payload = encodePayload(customPrompts);
-  backupPayloadInput.value = payload;
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(payload).catch(() => {});
-  }
-  setBackupMessage(i18n[currentLanguage].backupSaved);
-}
-
-function restoreBackup() {
-  if (!isBackupCodeValid()) {
-    setBackupMessage(i18n[currentLanguage].backupWrongCode);
-    return;
-  }
-
-  const payload = backupPayloadInput.value.trim();
-  if (!payload) {
-    setBackupMessage(i18n[currentLanguage].backupNoPayload);
-    return;
-  }
-
+function encodePayload(payload) {
+  const raw = JSON.stringify(payload);
   try {
-    const decoded = decodePayload(payload);
-    customPrompts = normalizePromptStore(decoded);
-    saveCustomPrompts();
-    renderCustomList(getCurrentCategoryLabel());
-    setBackupMessage(i18n[currentLanguage].backupLoaded);
+    return btoa(unescape(encodeURIComponent(raw)));
   } catch {
-    setBackupMessage(i18n[currentLanguage].backupInvalid);
+    return btoa(raw);
+  }
+}
+
+function getBackupSnapshot() {
+  return {
+    version: 1,
+    createdAt: new Date().toISOString(),
+    prompts: customPrompts
+  };
+}
+
+function downloadTextFile(filename, content, type = "application/json") {
+  const blob = new Blob([content], { type: `${type};charset=utf-8` });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
+function setBackupStatus(message) {
+  backupStatus.textContent = message;
+}
+
+function saveLocalBackup() {
+  saveCustomPrompts();
+  const payload = JSON.stringify(getBackupSnapshot(), null, 2);
+  const date = new Date().toISOString().slice(0, 10);
+  downloadTextFile(`sketchgame-backup-${date}.json`, payload);
+  backupPayloadInput.value = "";
+  setBackupStatus(i18n[currentLanguage].backupStatusLocal);
+}
+
+function saveForEveryone() {
+  const enteredCode = window.prompt(i18n[currentLanguage].backupDialogLabel);
+  if (enteredCode === null) {
+    return;
+  }
+
+  if (enteredCode !== BACKUP_CODE) {
+    setBackupStatus(i18n[currentLanguage].backupStatusDenied);
+    return;
+  }
+
+  const encoded = encodePayload(getBackupSnapshot());
+  backupPayloadInput.value = encoded;
+  setBackupStatus(i18n[currentLanguage].backupStatusUnlocked);
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(encoded).then(() => {
+      setBackupStatus(i18n[currentLanguage].backupStatusCopied);
+    }).catch(() => {
+      setBackupStatus(`${i18n[currentLanguage].backupStatusUnlocked}`);
+    });
   }
 }
 
@@ -803,17 +833,25 @@ langToggle.addEventListener("click", () => {
   currentLanguage = currentLanguage === "sv" ? "en" : "sv";
   localStorage.setItem("sketchLanguage", currentLanguage);
   updateLanguageText(currentLanguage);
-  generatedPrompts = [];
-  renderGeneratedList(generatedPrompts);
+  generatedPromptsByCategory = {
+    category1: [],
+    category2: [],
+    category3: []
+  };
+  renderGeneratedList(getActiveGeneratedPrompts());
 });
 
-settingsCategorySelect.addEventListener("change", renderSettings);
+settingsCategorySelect.addEventListener("change", () => {
+  activeSettingsCategory = settingsCategorySelect.value;
+  generatedPromptsByCategory[activeSettingsCategory] = [];
+  renderSettings();
+});
 manualAddBtn.addEventListener("click", applyManualAdd);
 generatePromptsBtn.addEventListener("click", generatePrompts);
 applyGeneratedBtn.addEventListener("click", applyGeneratedSelection);
 deleteSelectedBtn.addEventListener("click", applyDeleteSelected);
-saveBackupBtn.addEventListener("click", saveBackup);
-restoreBackupBtn.addEventListener("click", restoreBackup);
+saveLocalBtn.addEventListener("click", saveLocalBackup);
+saveAllBtn.addEventListener("click", saveForEveryone);
 
 startBtn.addEventListener("click", startRound);
 restartBtn.addEventListener("click", resetRound);
@@ -821,8 +859,7 @@ resetBtn.addEventListener("click", resetRound);
 settingsOpenBtn.addEventListener("click", () => showScreen("settings"));
 closeSettingsBtn.addEventListener("click", () => {
   showScreen("start");
-  generatedPrompts = [];
-  renderGeneratedList(generatedPrompts);
+  generatedPromptsByCategory[getCurrentCategoryLabel()] = [];
 });
 
 applyTheme(currentTheme);
