@@ -84,6 +84,20 @@
           <button id="deleteSelectedBtn" class="btn btn-secondary" type="button">Ta bort valda</button>
         </div>
 
+        <div class="settings-block">
+          <p id="settings-backup-title" class="settings-subtitle">Säkerhetskod</p>
+          <label id="settings-backup-label" for="backupCodeInput">Lås med kod för att spara/ladda in</label>
+          <div class="prompt-add-row">
+            <input id="backupCodeInput" type="password" maxlength="16" value="sketch4life" />
+          </div>
+          <div class="prompt-add-row">
+            <input id="backupPayloadInput" type="text" maxlength="12000" placeholder="Klistra in backup-kod här" />
+            <button id="restoreBackupBtn" class="btn btn-secondary" type="button">Ladda</button>
+          </div>
+          <button id="saveBackupBtn" class="btn btn-primary" type="button">Spara mina prompts</button>
+          <p id="backupMessage" class="settings-message" aria-live="polite"></p>
+        </div>
+
         <button id="closeSettingsBtn" class="btn btn-primary" type="button">Tillbaka</button>
       </section>
     </main>

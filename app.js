@@ -200,6 +200,7 @@ const promptSources = {
 
 const generatedPromptCount = 10;
 const STORAGE_KEY = "sketchCustomPrompts";
+const BACKUP_CODE = "sketch4life";
 
 const ROUND_SECONDS = 120;
 
@@ -233,12 +234,19 @@ const applyGeneratedBtn = document.getElementById("applyGeneratedBtn");
 const customList = document.getElementById("customList");
 const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
 const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+const backupCodeInput = document.getElementById("backupCodeInput");
+const backupPayloadInput = document.getElementById("backupPayloadInput");
+const saveBackupBtn = document.getElementById("saveBackupBtn");
+const restoreBackupBtn = document.getElementById("restoreBackupBtn");
+const backupMessageEl = document.getElementById("backupMessage");
 
 const settingsTitle = document.getElementById("settings-title");
 const settingsCategoryLabel = document.getElementById("settings-category-label");
 const manualLabel = document.getElementById("manual-label");
 const settingsGenerateTitle = document.getElementById("settings-generate-title");
 const settingsCustomTitle = document.getElementById("settings-custom-title");
+const settingsBackupTitle = document.getElementById("settings-backup-title");
+const settingsBackupLabel = document.getElementById("settings-backup-label");
 
 const i18n = {
   sv: {
@@ -270,7 +278,18 @@ const i18n = {
     deleteSelected: "Ta bort valda",
     openSettings: "Inställningar",
     closeSettings: "Tillbaka",
-    noItems: "Inga förslag ännu"
+    noItems: "Inga förslag ännu",
+    backupTitle: "Säkerhetskod",
+    backupLabel: "Kod för att spara/ladda",
+    backupCodeLabel: "Ange kod (sketch4life)",
+    saveBackupButton: "Spara mina prompts som kod",
+    restoreBackupButton: "Ladda prompts från kod",
+    backupPlaceholder: "Klistra in kod här",
+    backupNoPayload: "Klistra in kod att ladda",
+    backupWrongCode: "Fel kod. Ange sketch4life.",
+    backupInvalid: "Koden går inte att läsa. Kontrollera att den är hel.",
+    backupSaved: "Sparat. Koden är kopierad om det går.",
+    backupLoaded: "Prompts laddade från kod."
   },
   en: {
     lang: "en",
@@ -301,7 +320,18 @@ const i18n = {
     deleteSelected: "Delete selected",
     openSettings: "Settings",
     closeSettings: "Back",
-    noItems: "No items yet"
+    noItems: "No items yet",
+    backupTitle: "Backup",
+    backupLabel: "Code to save/load",
+    backupCodeLabel: "Enter code (sketch4life)",
+    saveBackupButton: "Save my prompts as code",
+    restoreBackupButton: "Load prompts from code",
+    backupPlaceholder: "Paste code here",
+    backupNoPayload: "Paste a code first",
+    backupWrongCode: "Wrong code. Use sketch4life.",
+    backupInvalid: "Code is invalid. Check it is complete.",
+    backupSaved: "Saved. Code copied if supported.",
+    backupLoaded: "Prompts loaded from code."
   }
 };
 
@@ -314,31 +344,50 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-const customPrompts = loadCustomPrompts();
+function normalizePromptStore(value) {
+  return {
+    sv: {
+      category1: ensureArray(value?.sv?.category1),
+      category2: ensureArray(value?.sv?.category2),
+      category3: ensureArray(value?.sv?.category3)
+    },
+    en: {
+      category1: ensureArray(value?.en?.category1),
+      category2: ensureArray(value?.en?.category2),
+      category3: ensureArray(value?.en?.category3)
+    }
+  };
+}
+
+let customPrompts = loadCustomPrompts();
 
 function loadCustomPrompts() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return clone(startDefaults);
     const parsed = JSON.parse(raw);
-
-    const sanitized = {
-      sv: {
-        category1: ensureArray(parsed?.sv?.category1),
-        category2: ensureArray(parsed?.sv?.category2),
-        category3: ensureArray(parsed?.sv?.category3)
-      },
-      en: {
-        category1: ensureArray(parsed?.en?.category1),
-        category2: ensureArray(parsed?.en?.category2),
-        category3: ensureArray(parsed?.en?.category3)
-      }
-    };
-
-    return sanitized;
+    return normalizePromptStore(parsed);
   } catch {
     return clone(startDefaults);
   }
+}
+
+function encodePayload(data) {
+  const raw = new TextEncoder().encode(JSON.stringify(data));
+  let binary = "";
+  for (let i = 0; i < raw.length; i += 1) {
+    binary += String.fromCharCode(raw[i]);
+  }
+  return btoa(binary);
+}
+
+function decodePayload(payload) {
+  const binary = atob(payload);
+  const raw = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    raw[i] = binary.charCodeAt(i);
+  }
+  return JSON.parse(new TextDecoder().decode(raw));
 }
 
 function saveCustomPrompts() {
@@ -495,6 +544,13 @@ function updateLanguageText(language) {
   manualAddBtn.textContent = strings.manualAddButton;
   deleteSelectedBtn.textContent = strings.deleteSelected;
   closeSettingsBtn.textContent = strings.closeSettings;
+  settingsBackupTitle.textContent = strings.backupTitle;
+  settingsBackupLabel.textContent = strings.backupLabel;
+  backupCodeInput.placeholder = strings.backupCodeLabel;
+  backupPayloadInput.placeholder = strings.backupPlaceholder;
+  saveBackupBtn.textContent = strings.saveBackupButton;
+  restoreBackupBtn.textContent = strings.restoreBackupButton;
+  setBackupMessage("");
 
   const categoryNames = strings.settingsCategoryNames;
   categories.forEach((category, index) => {
@@ -509,7 +565,11 @@ function updateLanguageText(language) {
     renderSettings();
   }
 
-  screenStart.querySelector(".play-actions")?.querySelector("button")?.setAttribute("title", strings.resetButton);
+  if (screenSettings.classList.contains("active")) {
+    backupCodeInput.value = "";
+    backupPayloadInput.value = "";
+    setBackupMessage("");
+  }
 }
 
 function addCustomPrompt(category, value) {
@@ -687,6 +747,51 @@ function applyManualAdd() {
   }
 }
 
+function isBackupCodeValid() {
+  return backupCodeInput.value.trim().toLowerCase() === BACKUP_CODE;
+}
+
+function setBackupMessage(message) {
+  backupMessageEl.textContent = message || "";
+}
+
+function saveBackup() {
+  if (!isBackupCodeValid()) {
+    setBackupMessage(i18n[currentLanguage].backupWrongCode);
+    return;
+  }
+
+  const payload = encodePayload(customPrompts);
+  backupPayloadInput.value = payload;
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(payload).catch(() => {});
+  }
+  setBackupMessage(i18n[currentLanguage].backupSaved);
+}
+
+function restoreBackup() {
+  if (!isBackupCodeValid()) {
+    setBackupMessage(i18n[currentLanguage].backupWrongCode);
+    return;
+  }
+
+  const payload = backupPayloadInput.value.trim();
+  if (!payload) {
+    setBackupMessage(i18n[currentLanguage].backupNoPayload);
+    return;
+  }
+
+  try {
+    const decoded = decodePayload(payload);
+    customPrompts = normalizePromptStore(decoded);
+    saveCustomPrompts();
+    renderCustomList(getCurrentCategoryLabel());
+    setBackupMessage(i18n[currentLanguage].backupLoaded);
+  } catch {
+    setBackupMessage(i18n[currentLanguage].backupInvalid);
+  }
+}
+
 themeToggle.addEventListener("click", () => {
   currentTheme = currentTheme === "light" ? "dark" : "light";
   applyTheme(currentTheme);
@@ -707,6 +812,8 @@ manualAddBtn.addEventListener("click", applyManualAdd);
 generatePromptsBtn.addEventListener("click", generatePrompts);
 applyGeneratedBtn.addEventListener("click", applyGeneratedSelection);
 deleteSelectedBtn.addEventListener("click", applyDeleteSelected);
+saveBackupBtn.addEventListener("click", saveBackup);
+restoreBackupBtn.addEventListener("click", restoreBackup);
 
 startBtn.addEventListener("click", startRound);
 restartBtn.addEventListener("click", resetRound);

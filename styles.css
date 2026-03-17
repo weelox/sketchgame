@@ -249,6 +249,12 @@ h1 {
   font-weight: 700;
 }
 
+.settings-message {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted-text);
+}
+
 .settings-block select,
 .settings-block input {
   width: 100%;
