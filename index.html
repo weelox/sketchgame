@@ -3,644 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UppMAKE i Örebro | Ideell makerspaceförening</title>
-    <meta
-      name="description"
-      content="UppMAKE är en ideell makerspaceförening i Örebro där människor bygger, lär och utvecklar idéer tillsammans."
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests"
-    />
-    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Sketch Challange</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="home-page">
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand brand-wordmark" href="#hem" aria-label="UppMAKE start">
-          <img src="orebro-uppmake-logo.svg" alt="UppMAKE logga" />
-        </a>
+  <body>
+    <main class="game-shell" aria-live="polite">
+      <header class="topbar">
+        <h1><span class="wordmark-primary">Sketch</span><span class="wordmark-secondary">Challange</span></h1>
+        <div class="top-actions">
+          <button id="themeToggle" class="btn btn-tertiary" type="button" aria-label="Byt tema">Mörkt tema</button>
+          <button id="langToggle" class="btn btn-tertiary" type="button" aria-label="Byt språk">English</button>
+        </div>
+      </header>
 
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Öppna meny" data-menu-toggle>
-          <span></span><span></span><span></span>
-        </button>
-
-        <nav class="main-nav" aria-label="Huvudnavigering" data-main-nav>
-          <a href="#hem">Hem</a>
-          <a href="#om-oss">Om oss</a>
-          <a href="#sponsorer">Sponsorer</a>
-          <a href="#bli-medlem">Bli medlem</a>
-          <a href="#kontakt">Kontakt</a>
-        </nav>
-        <a class="header-cta" href="#kontakt">KONTAKT</a>
-      </div>
-    </header>
-
-    <main>
-      <section class="upm-hero anchor-section" id="hem">
-        <video class="upm-video" autoplay muted loop playsinline preload="none" aria-hidden="true">
-          <source src="VIDEOS/0001-0192.mp4" type="video/mp4" />
-        </video>
-        <picture class="upm-video-fallback no-js-fallback-media">
-          <source srcset="assets/images/location/working-together.webp" type="image/webp" />
-          <img
-            src="assets/images/location/working-together.jpg"
-            alt="UppMAKE medlemmar arbetar tillsammans i verkstaden"
-            loading="eager"
-            decoding="async"
-          />
-        </picture>
-        <div class="upm-overlay" aria-hidden="true"></div>
-
-        <div class="container upm-inner reveal visible">
-          <div class="upm-logo-wrap" data-inline-svg="Evolving sweden UppMAEKE.svg">
-            <img class="upm-logo" src="Evolving%20sweden%20UppMAEKE.svg" alt="UppMAKE" />
-          </div>
-          <h1 class="upm-hero-title">Gör det du inte kan sluta tänka på!</h1>
-          <p class="upm-hero-lead">
-            En rörelse där idéer blir verklighet i Örebro.
-          </p>
+      <section id="screen-start" class="screen" aria-label="Startskärm" aria-live="polite">
+        <div class="start-actions">
+          <button id="startBtn" class="btn btn-primary" type="button">Starta ny runda</button>
+          <button id="settingsOpenBtn" class="btn btn-secondary" type="button">Inställningar</button>
         </div>
       </section>
 
-      <section class="upm-section upm-section-media-first reveal anchor-section" id="lokalen">
-        <div class="upm-collage" aria-label="Bild- och videoflöde från UppMAKE">
-          <div class="upm-collage-grid">
-            <figure class="upm-tile upm-tile-full upm-tile-panorama" data-title="Working together">
-              <picture>
-                <source srcset="assets/images/location/working-together.webp" type="image/webp" />
-                <img src="assets/images/location/working-together.jpg" alt="Medlemmar som bygger tillsammans i verkstaden" loading="eager" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-wide" data-title="Metalbender">
-              <video data-lazy-video autoplay muted loop playsinline preload="none" poster="assets/images/location/Metalbending.webp" aria-label="Kort klipp från aktivitet i makerspacet">
-                <source data-src="assets/images/location/metalbender.mp4" type="video/mp4" />
-              </video>
-              <picture class="no-js-fallback-media">
-                <source srcset="assets/images/location/Metalbending.webp" type="image/webp" />
-                <img src="assets/images/location/Metalbending.jpg" alt="Metallbearbetning i verkstaden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-wide upm-tile-woodworking" data-title="Woodworking">
-              <picture>
-                <source srcset="assets/images/location/woodworking.webp" type="image/webp" />
-                <img src="assets/images/location/woodworking.jpg" alt="Närbild av arbete med verktyg och material" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-large" data-title="CNC machine">
-              <picture>
-                <source srcset="assets/images/location/cnc-machine.webp" type="image/webp" />
-                <img src="assets/images/location/cnc-machine.jpg" alt="Maskiner och verktyg i UppMAKEs lokal" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-wide upm-tile-cad" data-title="CAD">
-              <video data-lazy-video autoplay muted loop playsinline preload="none" poster="assets/images/location/cad.webp" aria-label="Detaljklipp av arbete i verkstaden">
-                <source data-src="assets/images/location/cad.mp4" type="video/mp4" />
-              </video>
-              <picture class="no-js-fallback-media">
-                <source srcset="assets/images/location/cad.webp" type="image/webp" />
-                <img src="assets/images/location/cad.jpg" alt="CAD-arbete och digital konstruktion" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-large" data-title="Happy members">
-              <picture>
-                <source srcset="assets/images/location/happy-members.webp" type="image/webp" />
-                <img src="assets/images/location/happy-members.jpg" alt="Deltagare som visar färdiga projekt" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-full upm-tile-sewing" data-title="Sewing machine repair">
-              <picture>
-                <source srcset="assets/images/location/repairing%20Sewingmachine.webp" type="image/webp" />
-                <img src="assets/images/location/repairing%20Sewingmachine.jpg" alt="Reparation av symaskin i verkstaden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-wide" data-title="Embroidery">
-              <picture>
-                <source srcset="assets/images/location/embroidery.webp" type="image/webp" />
-                <img src="assets/images/location/embroidery.jpg" alt="Textilt skapande och broderi i verkstaden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-medium" data-title="Member makerspace">
-              <picture>
-                <source srcset="assets/images/location/member-makerspace.webp" type="image/webp" />
-                <img src="assets/images/location/member-makerspace.jpg" alt="Gemensam aktivitet med medlemmar i UppMAKE" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-medium" data-title="Crafting">
-              <picture>
-                <source srcset="assets/images/location/crafting.webp" type="image/webp" />
-                <img src="assets/images/location/crafting.jpg" alt="Kreativt hantverk och prototypbygge i lokalen" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-medium" data-title="Member meets">
-              <picture>
-                <source srcset="assets/images/location/member%20meets.webp" type="image/webp" />
-                <img src="assets/images/location/member%20meets.jpg" alt="Medlemmar som möts och utvecklar projekt tillsammans" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-portrait" data-title="Prototype build">
-              <picture>
-                <source srcset="assets/images/location/prototype-build.webp" type="image/webp" />
-                <img src="assets/images/location/prototype-build.jpg" alt="Teknikprojekt under arbete på arbetsbänk" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-wide upm-tile-laser-feature" data-title="Laser engrave">
-              <video data-lazy-video autoplay muted loop playsinline preload="none" poster="assets/images/location/lasercut%20earring.webp" aria-label="Maskiner i drift i makerspacet">
-                <source data-src="assets/images/location/laser-engrave.mp4" type="video/mp4" />
-              </video>
-              <picture class="no-js-fallback-media">
-                <source srcset="assets/images/location/lasercut%20earring.webp" type="image/webp" />
-                <img src="assets/images/location/lasercut%20earring.jpg" alt="Lasergraverad detalj i verkstaden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-medium" data-title="Makerspace">
-              <picture>
-                <source srcset="assets/images/location/makerspace.webp" type="image/webp" />
-                <img src="assets/images/location/makerspace.jpg" alt="Verkstadsmiljö med utrustning för prototyper" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="upm-tile upm-tile-medium" data-title="Cosplay print">
-              <picture>
-                <source srcset="assets/images/location/cosplay%20print.webp" type="image/webp" />
-                <img src="assets/images/location/cosplay%20print.jpg" alt="Detaljerad 3D-print och kreativt skapande i verkstaden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-          </div>
+      <section id="screen-play" class="screen" aria-label="Aktiv runda">
+        <div class="timer-card">
+          <span id="ui-timer-label" class="timer-label">Tid kvar</span>
+          <div class="time-display" id="timeDisplay" aria-live="assertive" aria-atomic="true">02:00</div>
+        </div>
+
+        <div class="prompt-grid">
+          <article class="prompt-card">
+            <p id="prompt1" class="prompt-text"></p>
+          </article>
+          <article class="prompt-card">
+            <p id="prompt2" class="prompt-text"></p>
+          </article>
+          <article class="prompt-card">
+            <p id="prompt3" class="prompt-text"></p>
+          </article>
+        </div>
+
+        <div class="play-actions">
+          <button id="resetBtn" class="btn btn-secondary" type="button">Börja om</button>
         </div>
       </section>
 
-      <section class="upm-section reveal anchor-section" id="om-oss">
-        <div class="container upm-who">
-          <div>
-            <p class="upm-kicker">Om UppMAKE</p>
-            <h2>Vi är en ideell förening där teknik möter kreativitet.</h2>
-          </div>
-          <p>
-            UppMAKE – här slutar idéer vara idéer.
-            Vi är en öppen gemenskap där du kan bygga, testa och göra egna idéer verkliga.
-          </p>
-        </div>
+      <section id="screen-finished" class="screen" aria-label="Rundan klar">
+        <p id="ui-finished-message" class="finished-message">Tiden är ute!</p>
+        <button id="restartBtn" class="btn btn-secondary" type="button">Börja om</button>
       </section>
 
-      <section class="upm-section reveal anchor-section" id="sponsorer">
-        <div class="container upm-partner-group">
-          <div class="upm-partner-head">
-            <h3>Samarbetspartners & sponsorer</h3>
-          </div>
-          <div class="upm-logos upm-logos-partners">
-            <figure class="logo-orebro-kommun">
-              <img src="assets/images/partners/orebro-kommun-final.svg" alt="Örebro kommun" />
-            </figure>
-            <figure class="logo-region-orebro">
-              <img src="assets/images/partners/region-orebro-lan-final.svg" alt="Region Örebro län" />
-            </figure>
-            <figure class="logo-orebro-tech">
-              <picture>
-                <source srcset="assets/images/partners/orebro-tech-final.webp" type="image/webp" />
-                <img src="assets/images/partners/orebro-tech-final.png" alt="Örebro Tech" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="logo-makers-sweden">
-              <picture>
-                <source srcset="assets/images/partners/makers-of-sweden-final.webp" type="image/webp" />
-                <img src="assets/images/partners/makers-of-sweden-final.png" alt="Makers of Sweden" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="logo-white">
-              <img src="assets/images/partners/white.svg" alt="White" />
-            </figure>
-            <figure class="logo-handelskammaren">
-              <img src="assets/images/partners/handelskammaren-malardalen.svg" alt="Handelskammaren Mälardalen" />
-            </figure>
-            <figure class="logo-catosaurus">
-              <picture>
-                <source srcset="assets/images/sponsors/catosaurus-final.webp" type="image/webp" />
-                <img src="assets/images/sponsors/catosaurus-final.png" alt="Catosaurus" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
-            <figure class="logo-powerminds">
-              <img src="assets/images/sponsors/powerminds-final.svg" alt="PowerMinds" />
-            </figure>
-            <figure class="logo-yubico">
-              <picture>
-                <source srcset="assets/images/sponsors/yubico-final.webp" type="image/webp" />
-                <img src="assets/images/sponsors/yubico-final.png" alt="Yubico" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
+      <section id="screen-settings" class="screen" aria-label="Inställningar">
+        <h2 id="settings-title">Inställningar</h2>
+
+        <div class="settings-block">
+          <label id="settings-category-label" for="settingsCategorySelect">Kategori</label>
+          <select id="settingsCategorySelect">
+            <option value="category1">Kategori 1</option>
+            <option value="category2">Kategori 2</option>
+            <option value="category3">Kategori 3</option>
+          </select>
+          <p id="settings-category-count" class="settings-count" aria-live="polite"></p>
+        </div>
+
+        <div class="settings-block">
+          <label id="manual-label" for="manualPromptInput">Lägg till prompt</label>
+          <div class="prompt-add-row">
+            <input id="manualPromptInput" type="text" maxlength="140" />
+            <button id="manualAddBtn" class="btn btn-secondary" type="button">Lägg till</button>
           </div>
         </div>
-      </section>
 
-      <section class="upm-section reveal anchor-section" id="bli-medlem">
-        <div class="container upm-membership">
-          <div>
-            <h2>Medlemskap</h2>
-            <p class="upm-body">
-              UppMAKE är en ideell förening. Medlemskapet kostar 200 kr per år och ger tillgång till community, aktiviteter
-              och verkstadsmiljö.
-            </p>
-            <div class="upm-actions">
-              <a class="upm-btn upm-btn-primary" href="https://forms.gle/B6gX9d2P5Et4p47u5" target="_blank" rel="noopener noreferrer">Bli medlem</a>
-            </div>
+        <div class="settings-block">
+          <p id="settings-generate-title" class="settings-subtitle">Generera nya förslag</p>
+          <button id="generatePromptsBtn" class="btn btn-secondary" type="button">Generera 10 nya prompts</button>
+          <div id="generatedList" class="prompt-list prompt-gallery" aria-live="polite"></div>
+          <button id="applyGeneratedBtn" class="btn btn-primary" type="button">Lägg till valda</button>
+        </div>
+
+        <div class="settings-block">
+          <p id="settings-custom-title" class="settings-subtitle">Mina prompts i valda kategorin</p>
+          <div id="customList" class="prompt-list"></div>
+          <button id="deleteSelectedBtn" class="btn btn-secondary" type="button">Ta bort valda</button>
+        </div>
+
+        <div class="settings-block">
+          <p id="settings-backup-title" class="settings-subtitle">Säkerhetskopiering</p>
+          <div class="prompt-add-row">
+            <button id="saveLocalBtn" class="btn btn-secondary" type="button">Spara på din enhet</button>
+            <button id="saveAllBtn" class="btn btn-secondary" type="button">Spara för alla</button>
           </div>
+          <textarea id="backupPayloadInput" class="backup-textarea" rows="4" placeholder="Din delningskod visas här" aria-label="Dela-kod"></textarea>
+          <p id="backupStatus" class="backup-status"></p>
         </div>
-      </section>
 
-      <section class="upm-section upm-section-dark reveal">
-        <div class="container upm-head">
-          <h2>Verkstad och fokusområden</h2>
+        <div class="settings-block">
+          <p id="settings-reset-title" class="settings-subtitle">Återställ prompts</p>
+          <button id="resetPromptsBtn" class="btn btn-tertiary" type="button">Återställ till grundinställningar</button>
         </div>
-        <div class="container">
-          <ul class="upm-lines">
-            <li>3D-skrivare, laserskärare, CNC-maskiner och elektronikrum.</li>
-            <li>Trä- och metallbearbetning, textil och cykelreparationer.</li>
-            <li>Basutbildningar inom CAD, elektronik, programmering och svetsteori.</li>
-            <li>Veckovisa öppettider i makerspacet samt workshops och events.</li>
-          </ul>
-        </div>
-      </section>
 
-      <section class="upm-section upm-section-dark reveal anchor-section" id="faq">
-        <div class="container upm-head">
-          <h2>FAQ</h2>
-        </div>
-        <div class="container">
-          <div class="upm-faq">
-            <details>
-              <summary>Vad är ett makerspace?</summary>
-              <p>
-                Ett makerspace är en plats och/eller en gemenskap där man jobbar med sina egna idéer – sida vid sida
-                med andra. Man delar verktyg, kunskap och erfarenheter. Ett sammanhang och en kultur där kreativa
-                personer får möjlighet att samexistera.
-              </p>
-            </details>
-            <details>
-              <summary>Hur blir jag medlem och vad kostar det?</summary>
-              <p>
-                Du fyller i medlemsansökan och betalar medlemsavgiften. Medlemskapet kostar 200 kronor per år och följs
-                av en introduktion.
-              </p>
-            </details>
-            <details>
-              <summary>Vilka verktyg och maskiner har ni?</summary>
-              <p>
-                Vi har bland annat 3D-skrivare, laserskärare, CNC-maskiner, elektronikarbetsstationer och verktyg för
-                träbearbetning.
-              </p>
-            </details>
-            <details>
-              <summary>Är det öppet för alla?</summary>
-              <p>
-                Ja, alla över 16 år är välkomna ensamma. Barn är välkomna i vuxet sällskap. Vi strävar efter en
-                inkluderande och kreativ miljö för olika erfarenhetsnivåer.
-              </p>
-            </details>
-            <details>
-              <summary>Har ni regler för maskinanvändning?</summary>
-              <p>
-                Ja. För säkerhet och underhåll krävs introduktion och utbildning innan maskinerna används.
-              </p>
-            </details>
-          </div>
-        </div>
-      </section>
-
-      <section class="upm-section reveal anchor-section" id="styrelsen">
-        <div class="container upm-head">
-          <h2>Ansvariga / Styrelsen</h2>
-        </div>
-        <div class="container">
-          <div class="upm-board-accordion">
-            <details>
-              <summary>
-                <span class="num">01</span>
-                <span class="txt">Ordförande — Adrian Hällzon</span>
-              </summary>
-              <div class="upm-board-content">
-                <picture>
-                  <source srcset="assets/images/board/Adrian_Hallzon.webp" type="image/webp" />
-                  <img class="upm-board-photo" src="assets/images/board/Adrian_Hallzon.png" alt="Adrian Hällzon" loading="lazy" decoding="async" />
-                </picture>
-                <div>
-                  <p>
-                    Drivs av samhällsutveckling inom innovation och teknik. Nyckelperson i utveckling av innovativa miljöer
-                    i makerrörelsen i Örebro, med fokus på att koppla ihop människor och idéer.
-                  </p>
-                  <p>Nuvarande arbete: Verksamhetsutvecklare och digital pedagog.</p>
-                </div>
-              </div>
-            </details>
-
-            <details>
-              <summary>
-                <span class="num">02</span>
-                <span class="txt">Kassör — Oscar Fransson</span>
-              </summary>
-              <div class="upm-board-content">
-                <div>
-                  <p>Stöttar ekonomiarbetet och föreningens löpande administration.</p>
-                </div>
-              </div>
-            </details>
-
-            <details>
-              <summary>
-                <span class="num">03</span>
-                <span class="txt">Sekreterare — Markus Willander</span>
-              </summary>
-              <div class="upm-board-content">
-                <div>
-                  <p>Ansvarar för struktur, dokumentation och uppföljning av styrelsearbetet.</p>
-                </div>
-              </div>
-            </details>
-
-            <details>
-              <summary>
-                <span class="num">04</span>
-                <span class="txt">Ledamot — Erica Hjelm</span>
-              </summary>
-              <div class="upm-board-content">
-                <div>
-                  <p>Bidrar i styrelsearbetet med fokus på utveckling av verksamheten.</p>
-                </div>
-              </div>
-            </details>
-
-            <details>
-              <summary>
-                <span class="num">05</span>
-                <span class="txt">Ledamot — Melinda Borgenfalk</span>
-              </summary>
-              <div class="upm-board-content">
-                <div>
-                  <p>Medverkar i planering och genomförande av föreningens aktiviteter.</p>
-                </div>
-              </div>
-            </details>
-
-            <details>
-              <summary>
-                <span class="num">06</span>
-                <span class="txt">Ledamot — Joakim</span>
-              </summary>
-              <div class="upm-board-content">
-                <div>
-                  <p>Medverkar i planering och genomförande av föreningens aktiviteter.</p>
-                </div>
-              </div>
-            </details>
-
-          </div>
-        </div>
-      </section>
-
-      <section class="upm-section upm-section-dark reveal anchor-section" id="stadgar">
-        <div class="container upm-head">
-          <h2>Stadgar</h2>
-        </div>
-        <div class="container">
-          <p class="upm-body">
-            Stadgarna (uppdaterade 2024-01-16) beskriver föreningens namn, ändamål, medlemskap, styrelse, beslutsordning
-            och hur årsstämman går till.
-          </p>
-          <details class="upm-statutes-toggle">
-            <summary>
-              <span class="upm-statutes-show">Visa stadgar</span>
-              <span class="upm-statutes-hide">Dölj stadgar</span>
-            </summary>
-            <div class="upm-statutes">
-            <details>
-              <summary>§1 Föreningens namn, säte samt organisationsnummer</summary>
-              <p>
-                Föreningens fullständiga namn är Uppfinnare-Makerspace Örebro. Föreningen har sitt säte i Örebro och
-                organisationsnummer 875002-0730.
-              </p>
-            </details>
-
-            <details>
-              <summary>§2 Ändamål</summary>
-              <p>
-                Föreningen verkar för kamratcirklar och kurser inom mekanik, elektronik och andra tekniska områden.
-                Föreningen ska främja medlemmarnas innovativa intressen och vara en allmän träffpunkt för både aktiva och
-                passiva medlemmar.
-              </p>
-              <p>
-                Föreningen ska aktivt motverka diskriminering på grund av kön, könsöverskridande identitet eller uttryck,
-                etnisk tillhörighet, religion eller annan trosuppfattning, funktionsnedsättning, sexuell läggning eller
-                ålder.
-              </p>
-            </details>
-
-            <details>
-              <summary>§3 Föreningsform samt oberoende</summary>
-              <p>Föreningen är en ideell förening som är religiöst och partipolitiskt oberoende.</p>
-            </details>
-
-            <details>
-              <summary>§4 Verksamhetsår</summary>
-              <p>Föreningens verksamhetsår är kalenderår.</p>
-            </details>
-
-            <details>
-              <summary>§5 Medlemmar samt medlemsavgift</summary>
-              <p>
-                En person kan antas som medlem om den godkänner stadgarna, vill verka för föreningens syfte och aktivt tar
-                ställning för medlemskap genom att betala medlemsavgiften.
-              </p>
-              <p>
-                Medlemsavgiften fastställs varje år på årsstämman och ska betalas senast i februari, eller senast två
-                veckor efter årsstämman. Medlem som allvarligt skadar föreningen kan stängas av av styrelsen eller
-                årsstämman.
-              </p>
-            </details>
-
-            <details>
-              <summary>§6 Styrelse samt beslutande organ</summary>
-              <p>
-                Beslutande organ är styrelsen samt årsstämma eller extra årsstämma. Styrelsen väljs av medlemmarna på
-                årsstämman.
-              </p>
-              <p>
-                Styrelsen ska som grund bestå av ordförande (1 år), kassör (2 år) och sekreterare (1 år). Vid lika
-                röstetal i styrelsen har ordföranden utslagsröst.
-              </p>
-            </details>
-
-            <details>
-              <summary>§7 Firmateckning</summary>
-              <p>
-                Föreningen tecknas av styrelsens ordförande samt kassör, var för sig, alternativt av en eller flera av
-                styrelsen utsedda myndiga personer. Utsedd person ska återrapportera till styrelsen.
-              </p>
-            </details>
-
-            <details>
-              <summary>§8 Stadgeändring</summary>
-              <p>
-                För ändring av stadgarna krävs beslut på två på varandra följande stämmor med minst en månads mellanrum,
-                varav en ska vara årsstämma, med minst 2/3 av avgivna röster.
-              </p>
-            </details>
-
-            <details>
-              <summary>§9 Upplösning av föreningen</summary>
-              <p>
-                För upplösning krävs beslut på två på varandra följande årsstämmor med minst tre månaders mellanrum och
-                minst 2/3 av avgivna röster.
-              </p>
-              <p>
-                Föreningens tillgångar ska först användas till skulder och därefter skänkas till ändamål förenliga med
-                föreningens syfte. Mottagare beslutas av sista årsstämman.
-              </p>
-            </details>
-
-            <details>
-              <summary>§10 Tidpunkt och kallelse för årsstämma</summary>
-              <p>
-                Årsstämma hålls normalt i februari eller mars. Kallelse skickas via e-post senast tre veckor före stämman.
-                Väsentliga frågor, som stadgeändring eller upplösning, ska anges i kallelsen.
-              </p>
-              <p>
-                Verksamhetsberättelse, revisionsberättelse, verksamhetsplan, budget och motioner ska vara tillgängliga för
-                medlemmarna senast en vecka före årsstämman.
-              </p>
-            </details>
-
-            <details>
-              <summary>§11 Motioner och förslag till årsstämma</summary>
-              <p>
-                Motioner kan skickas in under året, dock senast två veckor före årsstämma eller extra årsstämma. Styrelsen
-                ska skriva yttrande för varje motion senast en vecka innan stämman.
-              </p>
-            </details>
-
-            <details>
-              <summary>§12 Rösträtt, beslut och omröstning på årsstämma</summary>
-              <p>
-                Medlemmar som varit medlemmar de senaste 30 dagarna har rösträtt. Beslut fattas med acklamation eller
-                omröstning. Vid lika röstetal har ordföranden utslagsröst om ordföranden är röstberättigad.
-              </p>
-            </details>
-
-            <details>
-              <summary>§13 Valbarhet</summary>
-              <p>
-                Valbar till styrelsen är röstberättigad medlem. Styrelsemedlem samt anhörig till styrelsemedlem är inte
-                valbar till revisor.
-              </p>
-            </details>
-
-            <details>
-              <summary>§14 Årsstämmans dagordning</summary>
-              <ul>
-                <li>§1 Årsstämmans öppnande</li>
-                <li>§2 Fastställande av röstlängd</li>
-                <li>§3 Val av ordförande, vice ordförande och sekreterare för stämman</li>
-                <li>§4 Val av justerare och rösträknare</li>
-                <li>§5 Fråga om årsstämman utlysts enligt stadgarna</li>
-                <li>§6 Godkännande av dagordningen</li>
-                <li>§7 Föredragning av verksamhetsberättelse och ekonomisk rapport</li>
-                <li>§8 Revisionsberättelse</li>
-                <li>§9 Fråga om ansvarsfrihet för styrelsen</li>
-                <li>§10 Val av styrelseledamöter och revisorer (ordförande, kassör, ledamöter, revisor)</li>
-                <li>§11 Fastställande av medlemsavgift</li>
-                <li>§12 Verksamhetsplan</li>
-                <li>§13 Budget</li>
-                <li>§14 Inkomna motioner och propositioner</li>
-                <li>§15 Stämmans avslutande</li>
-              </ul>
-            </details>
-
-            <details>
-              <summary>§15 Extra årsstämma</summary>
-              <p>
-                Styrelsen kan kalla till extra årsstämma när som helst under året. Styrelsen ska också kalla till extra
-                årsstämma om revisorn eller minst 10% av medlemmarna begär det.
-              </p>
-            </details>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <section class="upm-section upm-section-dark reveal anchor-section" id="kontakt">
-        <div class="container upm-head">
-          <h2>Kontakt</h2>
-        </div>
-        <div class="container">
-          <ul class="upm-contact-list">
-            <li>
-              <a href="mailto:kontakt@uppmake.se">
-                <span class="thumb" aria-hidden="true">
-                  <img src="assets/images/contact/mail.svg" alt="" />
-                </span>
-                <span class="txt">kontakt@uppmake.se</span>
-                <span class="arr">↗</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/uppmake" target="_blank" rel="noopener noreferrer">
-                <span class="thumb" aria-hidden="true">
-                  <img src="assets/images/contact/github.svg" alt="" />
-                </span>
-                <span class="txt">github.com/uppmake</span>
-                <span class="arr">↗</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.facebook.com/orebromakerspace" target="_blank" rel="noopener noreferrer">
-                <span class="thumb" aria-hidden="true">
-                  <img src="assets/images/contact/facebook.svg" alt="" />
-                </span>
-                <span class="txt">facebook.com/orebromakerspace</span>
-                <span class="arr">↗</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.instagram.com/orebromakerspace/" target="_blank" rel="noopener noreferrer">
-                <span class="thumb" aria-hidden="true">
-                  <img src="assets/images/contact/instagram.svg" alt="" />
-                </span>
-                <span class="txt">instagram</span>
-                <span class="arr">↗</span>
-              </a>
-            </li>
-          </ul>
-          <div class="upm-map" aria-label="Hitta till UppMAKE">
-            <div class="upm-map-wrap upm-map-privacy">
-              <p class="upm-map-address">Diktargatan 25, 703 70 Örebro</p>
-              <p class="upm-map-note">Koordinater: 59.2970622, 15.1873474</p>
-              <a
-                class="upm-btn upm-btn-secondary"
-                href="https://maps.google.com/?q=Diktargatan%2025%2C%20703%2070%20%C3%96rebro"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Öppna karta
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="upm-section upm-cta reveal">
-        <div class="container">
-          <h2>Vill du besöka, stötta eller samarbeta?</h2>
-          <p>Hör av dig så berättar vi mer om verksamheten och aktuella projekt.</p>
-          <div class="upm-actions upm-actions-spaced">
-            <a class="upm-btn upm-btn-primary" href="#kontakt">Kontakta oss</a>
-            <a class="upm-btn upm-btn-secondary" href="sponsra.html">Sponsra oss</a>
-          </div>
-        </div>
+        <button id="closeSettingsBtn" class="btn btn-primary" type="button">Tillbaka</button>
       </section>
     </main>
-
-    <footer class="footer">
-      <div class="container footer-inner">        <span>© UppMAKE</span>
-      </div>
-    </footer>
 
     <script src="app.js" defer></script>
   </body>
