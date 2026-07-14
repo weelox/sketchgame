@@ -299,7 +299,7 @@ const STORAGE_KEY = "sketchCustomPrompts";
 const BACKUP_CODE = "sketch4life";
 const MAX_CUSTOM_PROMPTS_PER_CATEGORY = 400;
 
-const ROUND_SECONDS = 120;
+const ROUND_SECONDS = 300;
 
 const startBtn = document.getElementById("startBtn");
 const settingsOpenBtn = document.getElementById("settingsOpenBtn");
