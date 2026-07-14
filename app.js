@@ -354,7 +354,7 @@ const settingsResetTitle = document.getElementById("settings-reset-title");
 const i18n = {
   sv: {
     lang: "sv",
-    title: "Sketch Challange",
+    title: "Sketch Challenge",
     themeButtonLight: "Mörkt tema",
     themeButtonDark: "Ljust tema",
     themeAriaLabel: "Byt tema",
@@ -400,7 +400,7 @@ const i18n = {
   },
   en: {
     lang: "en",
-    title: "Sketch Challange",
+    title: "Sketch Challenge",
     themeButtonLight: "Dark theme",
     themeButtonDark: "Light theme",
     themeAriaLabel: "Toggle theme",
