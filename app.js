@@ -281,25 +281,11 @@ const basePrompts = {
   }
 };
 
-const promptSources = {
-  sv: {
-    has: ["tre huvuden", "ett regnbågsregn", "en osynlig rygg", "en fjäderdräkt", "en glittrig ö", "en kattnos", "en osannolik energi", "en svävande cirkel", "långpennor", "ett hemligt instrument", "en osynlig ryggsäck", "en teaternäsa", "en månstubbe", "tre röster"],
-    state: ["under vattnet", "mycket glad", "helt lugn", "på väg till månen", "överraskad", "extremt snabb", "nästan genomskinlig", "fylld av glitter", "helt stilla", "halv elektrisk"],
-    do: ["sjunger jazz", "spelar pingisboll", "målarmar i luften", "snurrar runt i timmar", "är ute med sin igelkott", "stirrar på en vägg", "byter hatt", "dricker regn", "dansar utan musik", "drömmer vilt", "bygger en bro av skumgummi", "vinner en osynlig tävling"]
-  },
-  en: {
-    has: ["three glowing horns", "an umbrella crown", "a hidden engine", "a bright backpack", "a tiny umbrella", "a velvet coat", "a mirror beard", "a pocket universe", "a zipper in the elbow", "three extra arms", "a moonlit glow", "an invisible cape", "an extra sock pair"],
-    state: ["under the sea", "too cheerful", "completely still", "half in dream mode", "full of glitter", "very confident", "almost transparent", "very impatient", "astronaut-calm", "strangely balanced"],
-    do: ["singing jazz", "juggling pencils", "building a tiny house", "drawing circles", "walking with a penguin", "wearing glitter boots", "carrying a map", "whispering to the sky", "folding a flag", "dancing with no music", "inventing a new sport", "rehearsing dramatic exits"]
-  }
-};
-
-const generatedPromptCount = 10;
 const STORAGE_KEY = "sketchCustomPrompts";
-const BACKUP_CODE = "sketch4life";
 const MAX_CUSTOM_PROMPTS_PER_CATEGORY = 400;
+const TIMER_DURATION_KEY = "sketchTimerSeconds";
 
-const ROUND_SECONDS = 300;
+const DEFAULT_ROUND_SECONDS = 300;
 
 const startBtn = document.getElementById("startBtn");
 const settingsOpenBtn = document.getElementById("settingsOpenBtn");
@@ -328,28 +314,14 @@ const playCategoryMap = [
   { key: "category3", label: "category3" }
 ];
 
-const settingsCategorySelect = document.getElementById("settingsCategorySelect");
-const manualPromptInput = document.getElementById("manualPromptInput");
-const manualAddBtn = document.getElementById("manualAddBtn");
-const generatePromptsBtn = document.getElementById("generatePromptsBtn");
-const generatedList = document.getElementById("generatedList");
-const applyGeneratedBtn = document.getElementById("applyGeneratedBtn");
-const customList = document.getElementById("customList");
-const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+const timerDurationSelect = document.getElementById("timerDurationSelect");
+const downloadPromptsBtn = document.getElementById("downloadPromptsBtn");
 const closeSettingsBtn = document.getElementById("closeSettingsBtn");
-const saveLocalBtn = document.getElementById("saveLocalBtn");
-const saveAllBtn = document.getElementById("saveAllBtn");
-const backupPayloadInput = document.getElementById("backupPayloadInput");
-const backupStatus = document.getElementById("backupStatus");
-const settingsCategoryCount = document.getElementById("settings-category-count");
-const resetPromptsBtn = document.getElementById("resetPromptsBtn");
+const settingsStatus = document.getElementById("settingsStatus");
 
 const settingsTitle = document.getElementById("settings-title");
-const settingsCategoryLabel = document.getElementById("settings-category-label");
-const manualLabel = document.getElementById("manual-label");
-const settingsGenerateTitle = document.getElementById("settings-generate-title");
-const settingsCustomTitle = document.getElementById("settings-custom-title");
-const settingsResetTitle = document.getElementById("settings-reset-title");
+const timerDurationLabel = document.getElementById("timer-duration-label");
+const settingsDownloadTitle = document.getElementById("settings-download-title");
 
 const i18n = {
   sv: {
@@ -369,31 +341,10 @@ const i18n = {
     screenFinishedLabel: "Rundan klar",
     screenSettingsLabel: "Inställningar",
     settingsTitle: "Inställningar",
-    settingsCategoryLabel: "Kategori",
-    settingsCategoryNames: ["Kategori 1", "Kategori 2", "Kategori 3"],
-    manualLabel: "Lägg till prompt",
-    manualAddButton: "Lägg till",
-    manualPlaceholder: "Skriv in en egen prompt och tryck lägg till",
-    categoryCount: "Mina prompts i {name}: {count}/{max}",
-    maxLimitReached: "Max 400 prompts per kategori är nått",
-    resetPromptsTitle: "Återställ prompts",
-    resetPromptsButton: "Återställ till grundinställningar",
-    resetPromptsConfirm: "Ta bort alla egna prompts och återgå till grundprompts?",
-    backupTitle: "Säkerhetskopiering",
-    saveLocalButton: "Spara på din enhet",
-    saveAllButton: "Spara för alla",
-    backupPlaceholder: "Din delningskod visas här",
-    backupStatusLocal: "Backup sparad på din enhet",
-    backupStatusUnlocked: "Kod godkänd",
-    backupStatusDenied: "Fel kod",
-    backupStatusCopied: "Delningskod kopierad till urklipp",
-    backupDialogLabel: "Ange kod för att spara för alla",
-    generateTitle: "Generera nya förslag",
-    generateButton: "Generera 10 nya prompts",
-    applyGenerated: "Lägg till valda",
-    noNewSelected: "Inga nya valda prompts att lägga till",
-    customTitle: "Mina prompts i valda kategorin",
-    deleteSelected: "Ta bort valda",
+    timerDurationLabel: "Tid per runda",
+    downloadTitle: "Prompts",
+    downloadPrompts: "Ladda ner alla prompts",
+    downloadStatus: "Promptfil nedladdad",
     openSettings: "Inställningar",
     closeSettings: "Tillbaka",
     noItems: "Inga förslag ännu"
@@ -415,31 +366,10 @@ const i18n = {
     screenFinishedLabel: "Round finished",
     screenSettingsLabel: "Settings",
     settingsTitle: "Settings",
-    settingsCategoryLabel: "Category",
-    settingsCategoryNames: ["Category 1", "Category 2", "Category 3"],
-    manualLabel: "Add prompt",
-    manualAddButton: "Add",
-    manualPlaceholder: "Type your own prompt and press add",
-    categoryCount: "{name}: {count}/{max} custom prompts",
-    maxLimitReached: "Max 400 prompts per category reached",
-    resetPromptsTitle: "Reset prompts",
-    resetPromptsButton: "Reset to defaults",
-    resetPromptsConfirm: "Remove all custom prompts and restore default prompts?",
-    backupTitle: "Backup",
-    saveLocalButton: "Save on your device",
-    saveAllButton: "Save for everyone",
-    backupPlaceholder: "Your share code will appear here",
-    backupStatusLocal: "Backup saved on your device",
-    backupStatusUnlocked: "Code accepted",
-    backupStatusDenied: "Wrong code",
-    backupStatusCopied: "Share code copied to clipboard",
-    backupDialogLabel: "Enter code to save for everyone",
-    generateTitle: "Generate new suggestions",
-    generateButton: "Generate 10 prompts",
-    applyGenerated: "Add selected",
-    noNewSelected: "No new selected prompts to add",
-    customTitle: "My prompts in selected category",
-    deleteSelected: "Delete selected",
+    timerDurationLabel: "Round time",
+    downloadTitle: "Prompts",
+    downloadPrompts: "Download all prompts",
+    downloadStatus: "Prompt file downloaded",
     openSettings: "Settings",
     closeSettings: "Back",
     noItems: "No items yet"
@@ -522,18 +452,19 @@ function initLanguage() {
   return "sv";
 }
 
-let remainingSeconds = ROUND_SECONDS;
+function initTimerSeconds() {
+  const saved = Number(localStorage.getItem(TIMER_DURATION_KEY));
+  const allowedValues = Array.from(timerDurationSelect.options).map((option) => Number(option.value));
+  return allowedValues.includes(saved) ? saved : DEFAULT_ROUND_SECONDS;
+}
+
+let currentRoundSeconds = initTimerSeconds();
+let remainingSeconds = currentRoundSeconds;
 let timerId = null;
 let currentTheme = initTheme();
 let currentLanguage = initLanguage();
 
 const categories = ["category1", "category2", "category3"];
-let activeSettingsCategory = "category1";
-let generatedPromptsByCategory = {
-  category1: [],
-  category2: [],
-  category3: []
-};
 
 function randomFrom(list) {
   if (!Array.isArray(list) || list.length === 0) {
@@ -588,8 +519,6 @@ function showScreen(screen) {
   } else if (screen === "settings") {
     screenSettings.classList.add("active");
     reloadCustomPrompts();
-    activeSettingsCategory = settingsCategorySelect.value;
-    generatedPromptsByCategory[activeSettingsCategory] = [];
     renderSettings();
   }
 }
@@ -603,7 +532,7 @@ function clearTimer() {
 
 function startTimer() {
   clearTimer();
-  remainingSeconds = ROUND_SECONDS;
+  remainingSeconds = currentRoundSeconds;
   timeDisplay.textContent = formatTime(remainingSeconds);
 
   timerId = setInterval(() => {
@@ -629,7 +558,7 @@ function startRound() {
 
 function resetRound() {
   clearTimer();
-  remainingSeconds = ROUND_SECONDS;
+  remainingSeconds = currentRoundSeconds;
   timeDisplay.textContent = formatTime(remainingSeconds);
   showScreen("start");
 }
@@ -666,36 +595,11 @@ function updateLanguageText(language) {
   screenSettings.setAttribute("aria-label", strings.screenSettingsLabel);
 
   settingsTitle.textContent = strings.settingsTitle;
-  settingsCategoryLabel.textContent = strings.settingsCategoryLabel;
-  manualLabel.textContent = strings.manualLabel;
-  manualPromptInput.placeholder = strings.manualPlaceholder;
-  settingsGenerateTitle.textContent = strings.generateTitle;
-  settingsCustomTitle.textContent = strings.customTitle;
-  generatePromptsBtn.textContent = strings.generateButton;
-  applyGeneratedBtn.textContent = strings.applyGenerated;
-  manualAddBtn.textContent = strings.manualAddButton;
-  saveLocalBtn.textContent = strings.saveLocalButton;
-  saveAllBtn.textContent = strings.saveAllButton;
-  resetPromptsBtn.textContent = strings.resetPromptsButton;
-  settingsResetTitle.textContent = strings.resetPromptsTitle;
-  document.getElementById("settings-backup-title").textContent = strings.backupTitle;
-  deleteSelectedBtn.textContent = strings.deleteSelected;
+  timerDurationLabel.textContent = strings.timerDurationLabel;
+  settingsDownloadTitle.textContent = strings.downloadTitle;
+  downloadPromptsBtn.textContent = strings.downloadPrompts;
   closeSettingsBtn.textContent = strings.closeSettings;
-  backupPayloadInput.placeholder = strings.backupPlaceholder;
-
-  const categoryNames = strings.settingsCategoryNames;
-  categories.forEach((category, index) => {
-    const option = settingsCategorySelect.querySelector(`option[value="${category}"]`);
-    if (option) {
-      const customCount = customPrompts[currentLanguage][category].length;
-      option.textContent = `${categoryNames[index]} (${customCount}/${MAX_CUSTOM_PROMPTS_PER_CATEGORY})`;
-    }
-  });
-
-  if (settingsCategoryCount) {
-    const countText = getCategoryCountText(getSelectedCategoryName(), getCurrentCategoryLabel());
-    settingsCategoryCount.textContent = countText;
-  }
+  updateTimerOptionsText();
 
   document.documentElement.lang = strings.lang;
   document.title = strings.title;
@@ -733,285 +637,66 @@ function isInBaseForLanguage(language, category, text) {
   return basePrompts[language][category].includes(text);
 }
 
-function getCategoryCountText(categoryName, category) {
-  const language = i18n[currentLanguage];
-  const count = customPrompts[currentLanguage][category].length;
-  const hasCountText = language.categoryCount
-    .replace("{name}", categoryName)
-    .replace("{count}", String(count))
-    .replace("{max}", String(MAX_CUSTOM_PROMPTS_PER_CATEGORY));
-
-  return hasCountText;
-}
-
-function getSelectedCategoryName() {
-  const index = categories.indexOf(getCurrentCategoryLabel());
-  const names = i18n[currentLanguage].settingsCategoryNames;
-  return names[index] || "";
-}
-
-function updateSettingsCategoryCounts() {
-  const category = getCurrentCategoryLabel();
-  if (settingsCategoryCount) {
-    settingsCategoryCount.textContent = getCategoryCountText(getSelectedCategoryName(), category);
-  }
-
-  const names = i18n[currentLanguage].settingsCategoryNames;
-  categories.forEach((categoryKey, index) => {
-    const option = settingsCategorySelect.querySelector(`option[value="${categoryKey}"]`);
-    if (option) {
-      const count = customPrompts[currentLanguage][categoryKey].length;
-      option.textContent = `${names[index]} (${count}/${MAX_CUSTOM_PROMPTS_PER_CATEGORY})`;
-    }
+function updateTimerOptionsText() {
+  Array.from(timerDurationSelect.options).forEach((option) => {
+    const minutes = Number(option.value) / 60;
+    option.textContent = currentLanguage === "sv"
+      ? `${minutes} ${minutes === 1 ? "minut" : "minuter"}`
+      : `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
   });
 }
 
+function updateTimerDuration() {
+  currentRoundSeconds = Number(timerDurationSelect.value) || DEFAULT_ROUND_SECONDS;
+  localStorage.setItem(TIMER_DURATION_KEY, String(currentRoundSeconds));
 
-function createCheckboxItem(text, checked = true) {
-  const item = document.createElement("label");
-  item.className = "prompt-item";
-
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.value = text;
-  checkbox.checked = checked;
-
-  const label = document.createElement("span");
-  label.textContent = text;
-
-  item.append(checkbox, label);
-  return item;
+  if (!screenPlay.classList.contains("active")) {
+    remainingSeconds = currentRoundSeconds;
+    timeDisplay.textContent = formatTime(remainingSeconds);
+  }
 }
 
-function renderGeneratedList(items) {
-  generatedList.innerHTML = "";
+function getAllPromptText() {
+  const languageLabels = {
+    sv: "Svenska",
+    en: "English"
+  };
 
-  if (!items.length) {
-    const emptyText = document.createElement("p");
-    emptyText.textContent = i18n[currentLanguage].noItems;
-    emptyText.style.margin = "0.2rem 0";
-    generatedList.append(emptyText);
-    return;
-  }
+  const categoryLabels = {
+    category1: "Kategori 1",
+    category2: "Kategori 2",
+    category3: "Kategori 3"
+  };
 
-  items.forEach((text) => {
-    generatedList.append(createCheckboxItem(text, true));
-  });
+  return ["Sketch Challenge prompts", ""]
+    .concat(Object.keys(basePrompts).flatMap((language) => [
+      languageLabels[language],
+      "",
+      ...categories.flatMap((category) => {
+        const prompts = [
+          ...basePrompts[language][category],
+          ...customPrompts[language][category]
+        ];
+
+        return [
+          categoryLabels[category],
+          ...prompts.map((prompt) => `- ${prompt}`),
+          ""
+        ];
+      })
+    ]))
+    .join("\n");
 }
 
-function renderCustomList(category) {
-  const items = customPrompts[currentLanguage][category] || [];
-  customList.innerHTML = "";
-
-  if (!items.length) {
-    const emptyText = document.createElement("p");
-    emptyText.textContent = i18n[currentLanguage].noItems;
-    emptyText.style.margin = "0.2rem 0";
-    customList.append(emptyText);
-    return;
-  }
-
-  items.forEach((text) => {
-    customList.append(createCheckboxItem(text, false));
-  });
+function downloadAllPrompts() {
+  reloadCustomPrompts();
+  const date = new Date().toISOString().slice(0, 10);
+  downloadTextFile(`sketch-challenge-prompts-${date}.txt`, getAllPromptText(), "text/plain");
+  settingsStatus.textContent = i18n[currentLanguage].downloadStatus;
 }
 
 function renderSettings() {
-  const category = getCurrentCategoryLabel();
-  renderCustomList(category);
-  renderGeneratedList(generatedPromptsByCategory[category]);
-  updateSettingsCategoryCounts();
-}
-
-function getCurrentCategoryLabel() {
-  return activeSettingsCategory;
-}
-
-function getActiveGeneratedPrompts() {
-  return generatedPromptsByCategory[getCurrentCategoryLabel()] || [];
-}
-
-function setActiveGeneratedPrompts(value) {
-  generatedPromptsByCategory[getCurrentCategoryLabel()] = value;
-}
-
-function randomGeneratedPrompt(language) {
-  const seed = promptSources[language];
-  const template = Math.floor(Math.random() * 3);
-  if (template === 0) {
-    if (language === "sv") {
-      return `Har ${randomFrom(seed.has)}`;
-    }
-    return `Has ${randomFrom(seed.has)}`;
-  }
-  if (template === 1) {
-    if (language === "sv") {
-      return `Är ${randomFrom(seed.state)}`;
-    }
-    return `Is ${randomFrom(seed.state)}`;
-  }
-
-  return randomFrom(seed.do);
-}
-
-function getGeneratedPool(language) {
-  const seed = promptSources[language];
-  return [
-    ...seed.has.map((item) => language === "sv" ? `Har ${item}` : `Has ${item}`),
-    ...seed.state.map((item) => language === "sv" ? `Är ${item}` : `Is ${item}`),
-    ...seed.do
-  ];
-}
-
-function generatePrompts() {
-  const language = currentLanguage;
-  const maxAttempts = 5000;
-  let attempts = 0;
-  const existing = new Set([
-    ...basePrompts[language].category1,
-    ...basePrompts[language].category2,
-    ...basePrompts[language].category3,
-    ...customPrompts[language].category1,
-    ...customPrompts[language].category2,
-    ...customPrompts[language].category3
-  ]);
-
-  const generatedPool = getGeneratedPool(language);
-  const candidates = generatedPool.filter((prompt) => !existing.has(prompt));
-  const fallbackPool = candidates.length > 0 ? candidates : generatedPool;
-
-  const generated = new Set();
-  while (generated.size < generatedPromptCount && attempts < maxAttempts) {
-    attempts += 1;
-    const maybePrompt = randomFrom(fallbackPool);
-    if (!generated.has(maybePrompt)) {
-      generated.add(maybePrompt);
-    }
-  }
-
-  if (generated.size < generatedPromptCount && fallbackPool.length > 0) {
-    let loopGuard = 0;
-    while (generated.size < generatedPromptCount && loopGuard < fallbackPool.length * 3) {
-      const candidate = fallbackPool[loopGuard % fallbackPool.length];
-      generated.add(candidate);
-      loopGuard += 1;
-    }
-  }
-
-  const finalPrompts = Array.from(generated).slice(0, generatedPromptCount);
-  setActiveGeneratedPrompts(finalPrompts);
-  renderGeneratedList(finalPrompts);
-}
-
-function applyGeneratedSelection() {
-  const boxes = generatedList.querySelectorAll("input:checked");
-  const category = getCurrentCategoryLabel();
-  const selected = new Set();
-  const successfullyAdded = new Set();
-  let added = false;
-  let limitReached = false;
-
-  boxes.forEach((box) => {
-    const value = box.value;
-    selected.add(value);
-    const result = addCustomPrompt(category, value);
-    if (result === true) {
-      successfullyAdded.add(value);
-      added = true;
-    } else if (result === "full") {
-      limitReached = true;
-    }
-  });
-
-  setActiveGeneratedPrompts(getActiveGeneratedPrompts().filter((prompt) => !successfullyAdded.has(prompt)));
-
-  if (added) {
-    setBackupStatus("");
-    renderCustomList(category);
-    renderGeneratedList(getActiveGeneratedPrompts());
-    updateSettingsCategoryCounts();
-    if (limitReached) {
-      setBackupStatus(i18n[currentLanguage].maxLimitReached);
-    }
-    return;
-  }
-
-  if (limitReached) {
-    setBackupStatus(i18n[currentLanguage].maxLimitReached);
-  } else if (selected.size > 0) {
-    setBackupStatus(i18n[currentLanguage].noNewSelected);
-  } else {
-    setBackupStatus("");
-  }
-
-  renderGeneratedList(getActiveGeneratedPrompts());
-}
-
-function applyDeleteSelected() {
-  const boxes = customList.querySelectorAll("input:checked");
-  const category = getCurrentCategoryLabel();
-  const toDelete = [];
-
-  boxes.forEach((box) => {
-    toDelete.push(box.value);
-  });
-
-  if (toDelete.length > 0) {
-    removeCustomPrompts(category, toDelete);
-    renderCustomList(category);
-    setBackupStatus("");
-    updateSettingsCategoryCounts();
-  }
-}
-
-function applyManualAdd() {
-  const category = getCurrentCategoryLabel();
-  const result = addCustomPrompt(category, manualPromptInput.value);
-  if (result === true) {
-    manualPromptInput.value = "";
-    renderCustomList(category);
-    setBackupStatus("");
-    updateSettingsCategoryCounts();
-    return;
-  }
-
-  if (result === "full") {
-    setBackupStatus(i18n[currentLanguage].maxLimitReached);
-    return;
-  }
-
-  setBackupStatus("");
-}
-
-function resetPromptsToDefaults() {
-  const strings = i18n[currentLanguage];
-  const shouldReset = window.confirm(strings.resetPromptsConfirm);
-  if (!shouldReset) {
-    return;
-  }
-
-  customPrompts = clone(startDefaults);
-  localStorage.removeItem(STORAGE_KEY);
-  settingsCategorySelect.value = activeSettingsCategory || "category1";
-  renderSettings();
-  setBackupStatus("");
-}
-
-function encodePayload(payload) {
-  const raw = JSON.stringify(payload);
-  try {
-    return btoa(unescape(encodeURIComponent(raw)));
-  } catch {
-    return btoa(raw);
-  }
-}
-
-function getBackupSnapshot() {
-  return {
-    version: 1,
-    createdAt: new Date().toISOString(),
-    prompts: customPrompts
-  };
+  timerDurationSelect.value = String(currentRoundSeconds);
 }
 
 function downloadTextFile(filename, content, type = "application/json") {
@@ -1027,43 +712,6 @@ function downloadTextFile(filename, content, type = "application/json") {
   URL.revokeObjectURL(url);
 }
 
-function setBackupStatus(message) {
-  backupStatus.textContent = message;
-}
-
-function saveLocalBackup() {
-  saveCustomPrompts();
-  const payload = JSON.stringify(getBackupSnapshot(), null, 2);
-  const date = new Date().toISOString().slice(0, 10);
-  downloadTextFile(`sketchgame-backup-${date}.json`, payload);
-  backupPayloadInput.value = "";
-  setBackupStatus(i18n[currentLanguage].backupStatusLocal);
-}
-
-function saveForEveryone() {
-  const enteredCode = window.prompt(i18n[currentLanguage].backupDialogLabel);
-  if (enteredCode === null) {
-    return;
-  }
-
-  if (enteredCode !== BACKUP_CODE) {
-    setBackupStatus(i18n[currentLanguage].backupStatusDenied);
-    return;
-  }
-
-  const encoded = encodePayload(getBackupSnapshot());
-  backupPayloadInput.value = encoded;
-  setBackupStatus(i18n[currentLanguage].backupStatusUnlocked);
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(encoded).then(() => {
-      setBackupStatus(i18n[currentLanguage].backupStatusCopied);
-    }).catch(() => {
-      setBackupStatus(`${i18n[currentLanguage].backupStatusUnlocked}`);
-    });
-  }
-}
-
 themeToggle.addEventListener("click", () => {
   currentTheme = currentTheme === "light" ? "dark" : "light";
   applyTheme(currentTheme);
@@ -1074,27 +722,12 @@ themeToggle.addEventListener("click", () => {
 langToggle.addEventListener("click", () => {
   currentLanguage = currentLanguage === "sv" ? "en" : "sv";
   localStorage.setItem("sketchLanguage", currentLanguage);
-  generatedPromptsByCategory = {
-    category1: [],
-    category2: [],
-    category3: []
-  };
   updateLanguageText(currentLanguage);
   renderSettings();
 });
 
-settingsCategorySelect.addEventListener("change", () => {
-  activeSettingsCategory = settingsCategorySelect.value;
-  generatedPromptsByCategory[activeSettingsCategory] = [];
-  renderSettings();
-});
-manualAddBtn.addEventListener("click", applyManualAdd);
-generatePromptsBtn.addEventListener("click", generatePrompts);
-applyGeneratedBtn.addEventListener("click", applyGeneratedSelection);
-deleteSelectedBtn.addEventListener("click", applyDeleteSelected);
-saveLocalBtn.addEventListener("click", saveLocalBackup);
-saveAllBtn.addEventListener("click", saveForEveryone);
-resetPromptsBtn.addEventListener("click", resetPromptsToDefaults);
+timerDurationSelect.addEventListener("change", updateTimerDuration);
+downloadPromptsBtn.addEventListener("click", downloadAllPrompts);
 
 startBtn.addEventListener("click", startRound);
 restartBtn.addEventListener("click", resetRound);
@@ -1102,11 +735,11 @@ resetBtn.addEventListener("click", resetRound);
 settingsOpenBtn.addEventListener("click", () => showScreen("settings"));
 closeSettingsBtn.addEventListener("click", () => {
   showScreen("start");
-  generatedPromptsByCategory[getCurrentCategoryLabel()] = [];
 });
 
 applyTheme(currentTheme);
 updateLanguageText(currentLanguage);
+renderSettings();
 
 showScreen("start");
-timeDisplay.textContent = formatTime(ROUND_SECONDS);
+timeDisplay.textContent = formatTime(currentRoundSeconds);

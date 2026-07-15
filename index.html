@@ -55,49 +55,21 @@
         <h2 id="settings-title">Inställningar</h2>
 
         <div class="settings-block">
-          <label id="settings-category-label" for="settingsCategorySelect">Kategori</label>
-          <select id="settingsCategorySelect">
-            <option value="category1">Kategori 1</option>
-            <option value="category2">Kategori 2</option>
-            <option value="category3">Kategori 3</option>
+          <label id="timer-duration-label" for="timerDurationSelect">Tid per runda</label>
+          <select id="timerDurationSelect">
+            <option value="60">1 minut</option>
+            <option value="120">2 minuter</option>
+            <option value="180">3 minuter</option>
+            <option value="300">5 minuter</option>
+            <option value="600">10 minuter</option>
+            <option value="900">15 minuter</option>
           </select>
-          <p id="settings-category-count" class="settings-count" aria-live="polite"></p>
         </div>
 
         <div class="settings-block">
-          <label id="manual-label" for="manualPromptInput">Lägg till prompt</label>
-          <div class="prompt-add-row">
-            <input id="manualPromptInput" type="text" maxlength="140" />
-            <button id="manualAddBtn" class="btn btn-secondary" type="button">Lägg till</button>
-          </div>
-        </div>
-
-        <div class="settings-block">
-          <p id="settings-generate-title" class="settings-subtitle">Generera nya förslag</p>
-          <button id="generatePromptsBtn" class="btn btn-secondary" type="button">Generera 10 nya prompts</button>
-          <div id="generatedList" class="prompt-list prompt-gallery" aria-live="polite"></div>
-          <button id="applyGeneratedBtn" class="btn btn-primary" type="button">Lägg till valda</button>
-        </div>
-
-        <div class="settings-block">
-          <p id="settings-custom-title" class="settings-subtitle">Mina prompts i valda kategorin</p>
-          <div id="customList" class="prompt-list"></div>
-          <button id="deleteSelectedBtn" class="btn btn-secondary" type="button">Ta bort valda</button>
-        </div>
-
-        <div class="settings-block">
-          <p id="settings-backup-title" class="settings-subtitle">Säkerhetskopiering</p>
-          <div class="prompt-add-row">
-            <button id="saveLocalBtn" class="btn btn-secondary" type="button">Spara på din enhet</button>
-            <button id="saveAllBtn" class="btn btn-secondary" type="button">Spara för alla</button>
-          </div>
-          <textarea id="backupPayloadInput" class="backup-textarea" rows="4" placeholder="Din delningskod visas här" aria-label="Dela-kod"></textarea>
-          <p id="backupStatus" class="backup-status"></p>
-        </div>
-
-        <div class="settings-block">
-          <p id="settings-reset-title" class="settings-subtitle">Återställ prompts</p>
-          <button id="resetPromptsBtn" class="btn btn-tertiary" type="button">Återställ till grundinställningar</button>
+          <p id="settings-download-title" class="settings-subtitle">Prompts</p>
+          <button id="downloadPromptsBtn" class="btn btn-secondary" type="button">Ladda ner alla prompts</button>
+          <p id="settingsStatus" class="backup-status" aria-live="polite"></p>
         </div>
 
         <button id="closeSettingsBtn" class="btn btn-primary" type="button">Tillbaka</button>
